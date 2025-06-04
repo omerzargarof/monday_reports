@@ -1,7 +1,7 @@
 Attribute VB_Name = "Module1"
 Sub CleanAndCopyHeaders()
 
-    ' --- עימוד ---
+    ' --- Pagination ---
 
     Dim ws As Worksheet
     Dim lastRow As Long
@@ -83,51 +83,44 @@ Sub CleanAndCopyHeaders()
     ws.Rows(2).Font.Bold = True
     
     
-    ' --- מיון ---
+    ' --- sorting ---
 
-    ' מציאת השורה האחרונה בעמודה
+'Find the last row in a column
    ' Dim lastRow As Long
     'lastRow = ws.Cells(ws.Rows.Count, "C2").End(xlUp).Row
     
-    ' טווח הנתונים למיון
+    ' The data range to sort
     Dim rng As Range
-    Set rng = ws.Range("A2:I" & lastRow) ' שנה את הטווח לפי הצורך
+    Set rng = ws.Range("A2:I" & lastRow) ' The range
 
-    ' מיון לפי העמודה הראשונה בעדיפות ראשונה
+' Sort by first column with first priority
     rng.Sort Key1:=ws.Range("F3"), Order1:=xlAscending, header:=xlYes
 
-    ' מיון לפי העמודה השנייה בעדיפות שנייה
+' Sort by the second column with second priority
     rng.Sort Key1:=ws.Range("D3"), Order1:=xlAscending, header:=xlYes
 
-    ' מיון לפי העמודה השלישית בעדיפות שלישית
- '   rng.Sort Key1:=ws.Range("A3"), Order1:=xlAscending, header:=xlYes
-    
-    ' מיון לפי העמודה השלישית בעדיפות רביעית
- '   rng.Sort Key1:=ws.Range("B3"), Order1:=xlAscending, header:=xlYes
-    
-    
-    ' מיון לפי העמודה השלישית בעדיפות חמישית
+
     rng.Sort Key1:=ws.Range("C3"), Order1:=xlAscending, header:=xlYes
     
     
     
-    ' --- צביעה ---
+    '--- Coloring ---
 
      Dim currentDate As String
     Dim previousDate As String
     Dim colorFlag As Boolean
     colorFlag = False
 
-    For i = 3 To lastRow ' הנחה שהנתונים מתחילים בשורה 3
+    For i = 3 To lastRow ' Assume the data starts in row 3
         currentDate = ws.Cells(i, 4).Value
         If currentDate <> previousDate Then
             colorFlag = Not colorFlag
         End If
 
         If colorFlag Then
-            ws.Rows(i).Interior.Color = RGB(211, 211, 211) ' צבע אפור בהיר
+            ws.Rows(i).Interior.Color = RGB(211, 211, 211) 'Light gray color
         Else
-            ws.Rows(i).Interior.Color = RGB(255, 255, 255) ' צבע לבן
+            ws.Rows(i).Interior.Color = RGB(255, 255, 255) 'White color
         End If
 
         previousDate = currentDate
@@ -149,7 +142,7 @@ Sub CleanAndCopyHeaders()
         End If
     Next cell
     
-    '----סינון תאריכים---
+'----Date Filter---
     'Dim ws As Worksheet
     'Dim lastRow As Long
     Dim monthNumber As Integer
@@ -159,7 +152,7 @@ Sub CleanAndCopyHeaders()
     Dim dateValue As Date
     
     ' Set the worksheet
-   ' Set ws = ThisWorkbook.Sheets("Sheet1") ' שנה את השם לשם הגיליון שלך
+   ' Set ws = ThisWorkbook.Sheets("Sheet1") 
     
     ' Get the last row in column 4
     lastRow = ws.Cells(ws.Rows.Count, 4).End(xlUp).Row
@@ -167,12 +160,12 @@ Sub CleanAndCopyHeaders()
     ' Get the current year
     currentMonth = Month(Date)
     ' Prompt the user for the month number
-    monthNumber = InputBox("עבור איזה חודש נרצה את הדוח? (1-12)", "בחירת חודש", currentMonth)
+    monthNumber = InputBox("For which month do we want the report? (1-12)", "Month selection", currentMonth)
     
     ' Get the current year
     currentYear = Year(Date)
     ' Prompt the user for the year with the current year as default
-    yearNumber = InputBox("אנא הזן שנה (למשל " & currentYear & ")", "בחירת שנה", currentYear)
+    yearNumber = InputBox("Please enter a year (e.g. " & currentYear & ")", "Choosing a year", currentYear)
 
    If monthNumber <> 0 Then
       ' Loop through the dates in column 4 and hide rows that don't match the selected month and year
@@ -186,12 +179,12 @@ Sub CleanAndCopyHeaders()
    
     
     
-    ' --- מיילים ---
+    ' --- Emails ---
 
-' הצגת הודעת שאלה למשתמש
-userMailResponse = MsgBox("האם לשלוח את מיילים למופיעים בדוח?", vbYesNo + vbQuestion, "אישור שליחה")
+' Display a question message to the user
+userMailResponse = MsgBox("Whether to send the emails appear in the report?", vbYesNo + vbQuestion, "Send confirmation")
 If userMailResponse = vbYes Then
-userCCResponse = MsgBox("האם לשלוח עותק לראש צוות?", vbYesNo + vbQuestion, "שליחת לראש צוות כCC")
+userCCResponse = MsgBox("Whether to send a copy to the team leader?", vbYesNo + vbQuestion, "Sending to team leader as CC")
 
     Dim OutlookApp As Object
     Dim OutlookMail As Object
@@ -209,39 +202,39 @@ userCCResponse = MsgBox("האם לשלוח עותק לראש צוות?", vbYesNo + vbQuestion, "שליח
      ' Set the file path for the email addresses
       Dim headerText As String
       
-    filePath = "\\bb8\D\Group Files\WMS\Softwares\Macro_Monday\Contact_List.xlsx"
+    filePath = "XXX\Macro_Monday\Contact_List.xlsx"
     
-    ' הגדרת גליון העבודה והטווח
-    'Set ws = ThisWorkbook.Sheets("Sheet1") ' שנה את שם הגליון לפי הצורך
-    'lastRow = ws.Cells(ws.Rows.Count, "C").End(xlUp).Row ' מציאת השורה האחרונה בעמודה C
+   ' Define the worksheet and range
+    'Set ws = ThisWorkbook.Sheets("Sheet1")
+    'lastRow = ws.Cells(ws.Rows.Count, "C").End(xlUp).Row 
     
-    ' יצירת אובייקט Outlook
+    ' Create an Outlook object
     Set OutlookApp = CreateObject("Outlook.Application")
     
-    ' הגדרת שורת הכותרת
+    'Setting the title bar
     headerText = "<tr>"
     For Each cell In ws.Range(ws.Cells(2, 1), ws.Cells(2, 8))
         headerText = headerText & "<th>" & cell.Value & "</th>"
     Next cell
     headerText = headerText & "</tr>"
     
-     ' נניח שהשמות מתחילים בשורה 3
+' Let's say the names start on line 3
      startRow = 3
     
     Do While startRow <= lastRow
         currentName = ws.Cells(startRow, "C").Value
         endRow = startRow
         
-        ' מציאת הטווח של השם הנוכחי
+' Finding the range of the current name
         Do While endRow <= lastRow And ws.Cells(endRow, "C").Value = currentName
             endRow = endRow + 1
         Loop
         
-        ' הגדרת הטווח לשליחה
+        'Setting the range for sending
         Set rng = ws.Range(ws.Cells(startRow, 1), ws.Cells(endRow - 1, 8))
         
-        ' בניית גוף המייל כ-HTML
-        bodyText = "<html><body><h3>נתוני מאנדיי עבור " & currentName & "</h3><table border='1'>" & headerText
+        ' Building the email body as HTML
+        bodyText = "<html><body><h3>Monday data for " & currentName & "</h3><table border='1'>" & headerText
         For Each cell In rng
             If cell.Column = 1 Then
                 bodyText = bodyText & "<tr>"
@@ -254,10 +247,10 @@ userCCResponse = MsgBox("האם לשלוח עותק לראש צוות?", vbYesNo + vbQuestion, "שליח
         bodyText = bodyText & "</table></body></html>"
         
          ' Open the workbook with email addresses
-    Set emailWb = Workbooks.Open(filePath) ' קובץ מהכתובת filePath
-    Set emailWs = emailWb.Sheets(1) ' גיליון מספר 1
+    Set emailWb = Workbooks.Open(filePath) '  filePath
+    Set emailWs = emailWb.Sheets(1) 'Sheet number 1
         
-        ' חיפוש כתובת המייל המתאימה ב-Excel
+'Find the appropriate email address in Excel
         emailAddress = ""
         For i = 2 To emailWs.Cells(emailWs.Rows.Count, "A").End(xlUp).Row
             If emailWs.Cells(i, 1).Value = currentName Then ' Assuming names are in column A
@@ -277,32 +270,32 @@ If userCCResponse = vbYes Then
     End If
 
         
-        ' יצירת המייל
+      ' Create the email
     If emailAddress <> "" Then
         Set OutlookMail = OutlookApp.CreateItem(0)
         With OutlookMail
-            .To = emailAddress ' שנה את כתובת הנמען לפי הצורך
+            .To = emailAddress 
            .CC = emailAddressCC
-            .Subject = "נתונים עבור " & currentName
+            .Subject = "Data for " & currentName
             .HTMLBody = bodyText
             .Send
         End With
     End If
           
-        ' עדכון השורה ההתחלתית לשם הבא
+' Update the starting line to the next name
         startRow = endRow
     Loop
     
-    ' ניקוי אובייקטים
+    'Cleaning objects
     Set OutlookMail = Nothing
     Set OutlookApp = Nothing
     
     
-    ' סגירת קובץ ה-Excel עם כתובות המייל
+' Close the Excel file with the email addresses
 emailWb.Close SaveChanges:=False
     
   '  Else
-  '  MsgBox "שליחת המיילים בוטלה.", vbInformation, "ביטול"
+  '  MsgBox "Sending emails has been canceled..", vbInformation, "Cancel"
 End If
 End Sub
 
